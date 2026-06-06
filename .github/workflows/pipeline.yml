@@ -1,0 +1,69 @@
+name: Crypto Pipeline
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+
+jobs:
+  extract-and-load:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write GCP credentials
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          echo "$GCP_SA_KEY" > sa-key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/sa-key.json" >> $GITHUB_ENV
+
+      - name: Extract from CoinGecko
+        id: extract
+        env:
+          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+          GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          PARQUET_PATH=$(python scripts/extract.py)
+          echo "parquet_path=$PARQUET_PATH" >> $GITHUB_OUTPUT
+          echo "Archivo generado: \`$PARQUET_PATH\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Load to GCS Bronze
+        if: success()
+        id: load
+        env:
+          GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          GCS_URI=$(python scripts/load.py "${{ steps.extract.outputs.parquet_path }}")
+          echo "gcs_uri=$GCS_URI" >> $GITHUB_OUTPUT
+          {
+            echo "## Pipeline Crypto — $(date -u +'%Y-%m-%d %H:%M UTC')"
+            echo ""
+            echo "- **Archivo local:** \`${{ steps.extract.outputs.parquet_path }}\`"
+            echo "- **Subido a:** \`$GCS_URI\`"
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Failure summary
+        if: failure()
+        run: |
+          {
+            echo "## Pipeline Crypto — FALLÓ — $(date -u +'%Y-%m-%d %H:%M UTC')"
+            echo ""
+            echo "Revisá los logs del step que falló. Podés re-ejecutar manualmente con \`workflow_dispatch\`."
+          } >> $GITHUB_STEP_SUMMARY
