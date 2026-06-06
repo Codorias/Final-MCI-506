@@ -1,0 +1,32 @@
+# --- Secretos (NUNCA commitear) ---
+.env
+*.env
+!.env.example
+sa-key.json
+*-sa-key.json
+*credentials*.json
+service-account*.json
+# JSON de service account de GCP (cualquier nombre)
+gcp-*.json
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+env/
+ENV/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- Datos locales (Bronze se sube a GCS, no a git) ---
+data/
+*.parquet
+
+# --- Sistema / editores ---
+.DS_Store
+.idea/
+.vscode/
