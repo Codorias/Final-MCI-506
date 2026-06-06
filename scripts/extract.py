@@ -211,6 +211,10 @@ def main() -> Path:
 
     path = to_parquet(df, bronze_path(df))
     log.info("Extracción Bronze completada → %s", path)
+    # Los logs van a stderr; imprimimos SOLO la ruta a stdout para que el
+    # workflow la capture con PARQUET_PATH=$(python scripts/extract.py) y se la
+    # pase a load.py (Persona 3).
+    print(path)
     return path
 
 

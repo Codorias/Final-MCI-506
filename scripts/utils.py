@@ -36,6 +36,36 @@ BIGQUERY_DATASET_GOLD = os.environ.get("BIGQUERY_DATASET_GOLD", "crypto_gold")
 COINGECKO_API_KEY = os.environ.get("COINGECKO_API_KEY", "")
 
 
+def get_config() -> dict:
+    """Devuelve la configuración del pipeline leída del entorno (contrato Parte 0.8).
+
+    Lee las variables en el momento de la llamada (no al importar el módulo),
+    para que funcione tanto en local (``.env``) como en CI, donde GitHub Actions
+    inyecta los secrets por step. Lo consume ``load.py`` (Persona 3) para obtener
+    el bucket de GCS, y queda disponible para Silver/Gold.
+
+    Returns:
+        Diccionario con las claves: ``GCP_PROJECT_ID``, ``GCS_BUCKET``,
+        ``BIGQUERY_DATASET_EXTERNAL``, ``BIGQUERY_DATASET_SILVER``,
+        ``BIGQUERY_DATASET_GOLD``, ``COINGECKO_API_KEY`` y
+        ``GOOGLE_APPLICATION_CREDENTIALS``.
+
+    Example:
+        >>> cfg = get_config()
+        >>> cfg["GCS_BUCKET"]
+        'mci506-crypto-bronze-...'
+    """
+    return {
+        "GCP_PROJECT_ID": os.environ.get("GCP_PROJECT_ID", ""),
+        "GCS_BUCKET": os.environ.get("GCS_BUCKET", ""),
+        "BIGQUERY_DATASET_EXTERNAL": os.environ.get("BIGQUERY_DATASET_EXTERNAL", "crypto"),
+        "BIGQUERY_DATASET_SILVER": os.environ.get("BIGQUERY_DATASET_SILVER", "crypto_silver"),
+        "BIGQUERY_DATASET_GOLD": os.environ.get("BIGQUERY_DATASET_GOLD", "crypto_gold"),
+        "COINGECKO_API_KEY": os.environ.get("COINGECKO_API_KEY", ""),
+        "GOOGLE_APPLICATION_CREDENTIALS": os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", ""),
+    }
+
+
 def get_logger(name: str = "mci506") -> logging.Logger:
     """Crea (o recupera) un logger con formato de timestamp y nivel.
 
