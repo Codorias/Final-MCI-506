@@ -1,11 +1,5 @@
 # PROYECTO FINAL MCI506 — Pipeline de Datos Cripto (CoinGecko)
 
-> **Documento maestro (contrato de implementación).** Único `PROYECTO.md` del proyecto, versionado en el repo.
-> Está dividido en **5 partes**: la **Parte 0 es el contrato compartido** (la interfaz entre las piezas; solo se cambia por PR + review de los 3). Las **Partes 1-3** son el trabajo de cada persona. La **Parte 4** es la integración.
-> **Cómo usarlo con Claude Code:** cada quien sube este archivo completo y pide *“implementá la Parte N respetando el contrato de la Parte 0”*. No avanzar de fase sin cumplir su Definition of Done (DoD).
-> 
-> **Alineación con clase:** este diseño calca el patrón canónico del proyecto de referencia `mci506-f1` (Temas 4 y 5): Bronze en **Parquet** sobre GCS, Silver con External + Native tables e incremental `WHERE NOT EXISTS`, Gold por Scheduled Query, Viz en Looker. ELT en BigQuery (Tema 2). Sin Docker (se enseñó en Tema 3 pero el pipeline canónico no lo usa).
-
 -----
 
 # PARTE 0 — CONTRATO COMPARTIDO (read-only; cambia solo por PR + review de los 3)
