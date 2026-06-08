@@ -2,6 +2,11 @@
 
 Proyecto final de **Ingenieria de Datos (MCI506)** — Universidad Catolica Boliviana.
 
+Integrantes:
+Claudio Cesar Orias Dominguez
+Klaus Uribe Zabala
+Jorge Mucarcel
+
 Pipeline **medallion Bronze -> Silver -> Gold** que extrae el mercado cripto (top 250 monedas,
 fuente [CoinGecko](https://www.coingecko.com/)) y lo procesa de forma automatizada sobre
 **GCS + BigQuery + GitHub Actions + Looker Studio**.
